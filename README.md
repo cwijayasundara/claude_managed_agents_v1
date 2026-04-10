@@ -71,34 +71,34 @@ Each experiment has a self-contained `run.py` that handles setup, execution, and
 
 | # | Name | API Surface | Key Concepts | Model |
 |---|------|-------------|-------------|-------|
-| 1 | [Web Research](experiment_1/) | Managed Agents | Web research, SSE streaming, file download | `claude-haiku-4-5` |
-| 2 | [Stock Analyst](experiment_2/) | Managed Agents | Custom tools, client-side execution, tool result round-trip | `claude-haiku-4-5` |
-| 3 | [Data Analyst](experiment_3/) | Managed Agents | File upload, session resources, restricted networking, per-tool config | `claude-haiku-4-5` |
-| 4 | [Advisor Tool](experiment_4/) | Messages API | Executor + advisor pairing, strategic guidance, cost comparison | `claude-haiku-4-5` + `claude-opus-4-6` |
-| 5 | [Deep Agents](experiment_5/) | LangChain | Open-source alternative, model-agnostic, built-in tools, comparison | `anthropic:claude-haiku-4-5` |
-| 6 | [Middleware Advisor](experiment_6/) | LangChain | Advisor strategy via middleware, wrap_model_call, open-source advisor | `claude-haiku-4-5` + `claude-opus-4-6` |
+| 1 | [Web Research](ex_1_web_research/) | Managed Agents | Web research, SSE streaming, file download | `claude-haiku-4-5` |
+| 2 | [Stock Analyst](ex_2_custom_tools/) | Managed Agents | Custom tools, client-side execution, tool result round-trip | `claude-haiku-4-5` |
+| 3 | [Data Analyst](ex_3_file_upload/) | Managed Agents | File upload, session resources, restricted networking, per-tool config | `claude-haiku-4-5` |
+| 4 | [Advisor Tool](ex_4_advisor_native/) | Messages API | Executor + advisor pairing, strategic guidance, cost comparison | `claude-haiku-4-5` + `claude-opus-4-6` |
+| 5 | [Deep Agents](ex_5_deep_agents/) | LangChain | Open-source alternative, model-agnostic, built-in tools, comparison | `anthropic:claude-haiku-4-5` |
+| 6 | [Middleware Advisor](ex_6_advisor_middleware/) | LangChain | Advisor strategy via middleware, wrap_model_call, open-source advisor | `claude-haiku-4-5` + `claude-opus-4-6` |
 
 ### Run a single experiment
 
 ```bash
-python experiment_1/run.py    # Web Research — agentic AI dashboard
-python experiment_2/run.py    # Stock Analyst — custom tool round-trip
-python experiment_3/run.py    # Data Analyst — file upload + restricted networking
-python experiment_4/run.py    # Advisor Tool — Haiku executor + Opus advisor
-python experiment_5/run.py    # Deep Agents — LangChain open-source alternative
-python experiment_6/run.py    # Middleware Advisor — LangChain advisor strategy
+python ex_1_web_research/run.py    # Web Research — agentic AI dashboard
+python ex_2_custom_tools/run.py    # Stock Analyst — custom tool round-trip
+python ex_3_file_upload/run.py    # Data Analyst — file upload + restricted networking
+python ex_4_advisor_native/run.py    # Advisor Tool — Haiku executor + Opus advisor
+python ex_5_deep_agents/run.py    # Deep Agents — LangChain open-source alternative
+python ex_6_advisor_middleware/run.py    # Middleware Advisor — LangChain advisor strategy
 ```
 
 ### Run all experiments
 
 ```bash
 # Run sequentially (each creates, runs, and tears down its own resources)
-python experiment_1/run.py && \
-python experiment_2/run.py && \
-python experiment_3/run.py && \
-python experiment_4/run.py && \
-python experiment_5/run.py && \
-python experiment_6/run.py
+python ex_1_web_research/run.py && \
+python ex_2_custom_tools/run.py && \
+python ex_3_file_upload/run.py && \
+python ex_4_advisor_native/run.py && \
+python ex_5_deep_agents/run.py && \
+python ex_6_advisor_middleware/run.py
 ```
 
 > **Note:** Experiments 5 and 6 require additional installs: `pip install deepagents langchain langchain-anthropic`.
@@ -128,9 +128,9 @@ Implements the **advisor strategy** (cf. Experiment 4) using LangChain v1's `wra
 Experiment 1 also has separate scripts if you want to keep the agent alive across multiple runs:
 
 ```bash
-python experiment_1/setup.py     # Create agent + environment, save IDs to .env
-python experiment_1/main.py      # Run a session (repeatable)
-python experiment_1/cleanup.py   # Archive agent, delete environment
+python ex_1_web_research/setup.py     # Create agent + environment, save IDs to .env
+python ex_1_web_research/main.py      # Run a session (repeatable)
+python ex_1_web_research/cleanup.py   # Archive agent, delete environment
 ```
 
 ## Project Structure
@@ -141,31 +141,31 @@ python experiment_1/cleanup.py   # Archive agent, delete environment
 ├── requirements.txt        # Shared Python dependencies
 ├── README.md               # This file
 │
-├── experiment_1/           # Web Research — Agentic AI Dashboard
+├── ex_1_web_research/           # Web Research — Agentic AI Dashboard
 │   ├── README.md
 │   ├── run.py              # All-in-one: setup → run → teardown
 │   ├── setup.py            # One-time setup (alternative)
 │   ├── main.py             # Per-run (alternative)
 │   └── cleanup.py          # Teardown (alternative)
 │
-├── experiment_2/           # Stock Analyst — Custom Tools
+├── ex_2_custom_tools/           # Stock Analyst — Custom Tools
 │   ├── README.md
 │   └── run.py              # All-in-one: setup → run → teardown
 │
-├── experiment_3/           # Data Analyst — File Upload + Restricted Networking
+├── ex_3_file_upload/           # Data Analyst — File Upload + Restricted Networking
 │   ├── README.md
 │   ├── sample_data.csv     # Input data (mounted into the container)
 │   └── run.py              # All-in-one: setup → run → teardown
 │
-├── experiment_4/           # Advisor Tool — Executor + Advisor Strategy (Messages API)
+├── ex_4_advisor_native/           # Advisor Tool — Executor + Advisor Strategy (Messages API)
 │   ├── README.md
 │   └── run.py              # Runs 3 examples: single-turn, multi-turn, cost comparison
 │
-├── experiment_5/           # Deep Agents — LangChain Open-Source Alternative
+├── ex_5_deep_agents/           # Deep Agents — LangChain Open-Source Alternative
 │   ├── README.md
 │   └── run.py              # Custom tools, streaming, built-in tools, comparison
 │
-└── experiment_6/           # Middleware Advisor — LangChain Advisor Strategy
+└── ex_6_advisor_middleware/           # Middleware Advisor — LangChain Advisor Strategy
     ├── README.md
     └── run.py              # wrap_model_call advisor, single-turn, multi-turn
 ```
@@ -187,7 +187,7 @@ Prompt caching and context compaction are applied automatically to reduce costs.
 Each experiment has its own `cleanup.py`. To tear down everything:
 
 ```bash
-python experiment_1/cleanup.py
+python ex_1_web_research/cleanup.py
 ```
 
 Experiments 2 and 3 use `run.py` which tears down automatically. Experiment 1's `run.py` also self-cleans.
@@ -196,7 +196,7 @@ Experiments 2 and 3 use `run.py` which tears down automatically. Experiment 1's 
 
 | Issue | Solution |
 |-------|----------|
-| `KeyError: 'EXP1_AGENT_ID'` | Run `python experiment_1/setup.py` first |
+| `KeyError: 'EXP1_AGENT_ID'` | Run `python ex_1_web_research/setup.py` first |
 | `authentication_error` | Check that `ANTHROPIC_API_KEY` in `.env` is valid |
 | No files downloaded | ~3s indexing lag after session goes idle. Scripts account for this. |
 | `cannot delete while running` | Session is still active. Send an interrupt event first. |

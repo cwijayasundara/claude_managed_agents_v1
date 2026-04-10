@@ -61,7 +61,7 @@ pip install langchain langchain-anthropic
 ## Usage
 
 ```bash
-python experiment_6/run.py
+python ex_6_advisor_middleware/run.py
 ```
 
 ## Customizing the Advisor

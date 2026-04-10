@@ -50,5 +50,5 @@ Your code: downloads the report, cleans up everything
 ## Usage
 
 ```bash
-python experiment_3/run.py
+python ex_3_file_upload/run.py
 ```

@@ -18,13 +18,13 @@ All commands run from the **project root** (not this directory).
 
 ```bash
 # 1. One-time setup — creates agent + environment
-python experiment_1/setup.py
+python ex_1_web_research/setup.py
 
 # 2. Run a research session
-python experiment_1/main.py
+python ex_1_web_research/main.py
 
 # 3. Teardown when done
-python experiment_1/cleanup.py
+python ex_1_web_research/cleanup.py
 ```
 
 ## Environment Variables

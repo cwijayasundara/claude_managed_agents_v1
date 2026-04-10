@@ -47,7 +47,7 @@ pip install deepagents
 ## Usage
 
 ```bash
-python experiment_5/run.py
+python ex_5_deep_agents/run.py
 ```
 
 ## Configuration

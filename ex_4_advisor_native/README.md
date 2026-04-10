@@ -63,7 +63,7 @@ Requires the `advisor-tool-2026-03-01` beta header. The SDK sets this via `betas
 ## Usage
 
 ```bash
-python experiment_4/run.py
+python ex_4_advisor_native/run.py
 ```
 
 ## Key Takeaways

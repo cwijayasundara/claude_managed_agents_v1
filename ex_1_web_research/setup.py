@@ -41,4 +41,4 @@ with open(".env", "a") as f:
 print(f"EXP1_AGENT_ID={agent.id}")
 print(f"EXP1_AGENT_VERSION={agent.version}")
 print(f"EXP1_ENVIRONMENT_ID={environment.id}")
-print("\nSaved to .env — you can now run experiment_1/main.py")
+print("\nSaved to .env — you can now run ex_1_web_research/main.py")

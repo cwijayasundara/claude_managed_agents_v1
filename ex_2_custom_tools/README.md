@@ -48,5 +48,5 @@ Both use simulated data. Replace with real API calls (e.g., Alpha Vantage, Yahoo
 ## Usage
 
 ```bash
-python experiment_2/run.py
+python ex_2_custom_tools/run.py
 ```
