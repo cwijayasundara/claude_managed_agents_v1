@@ -19,13 +19,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langchain.agents import create_agent
-from langchain.agents.middleware import (
-    AgentMiddleware,
-    wrap_model_call,
-    ModelRequest,
-    ModelResponse,
-)
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
 from langchain_anthropic import ChatAnthropic
+from langchain_core.messages import SystemMessage, HumanMessage
 
 
 # ── Models ───────────────────────────────────────────────────────────────────
@@ -52,74 +48,65 @@ class AdvisorMiddleware(AgentMiddleware):
     """
 
     def __init__(self, advisor, consult_every_n: int = 3):
-        """
-        Args:
-            advisor: The stronger model to consult for strategic guidance.
-            consult_every_n: Consult the advisor every N model calls.
-        """
         self.advisor = advisor
         self.consult_every_n = consult_every_n
         self.call_count = 0
         self.last_advice = None
 
-    def wrap_model_call(self, handler):
-        """Intercept model calls to inject advisor guidance."""
+    def wrap_model_call(self, request, handler):
+        """Intercept model calls to inject advisor guidance.
 
-        async def wrapped(request: ModelRequest) -> ModelResponse:
-            self.call_count += 1
-            should_consult = (
-                self.call_count == 1  # Always consult on first call
-                or self.call_count % self.consult_every_n == 0  # Periodic
+        Args:
+            request: ModelRequest with messages, system_message, model, etc.
+            handler: Callback to execute the actual model call.
+
+        Returns:
+            ModelResponse from the executor, enriched by advisor guidance.
+        """
+        self.call_count += 1
+        should_consult = (
+            self.call_count == 1  # Always consult on first call
+            or self.call_count % self.consult_every_n == 0  # Periodic
+        )
+
+        if should_consult:
+            print(f"\n  [Advisor middleware: consulting Opus (call #{self.call_count})...]")
+
+            # Build advisor prompt from the current conversation
+            advisor_messages = [
+                SystemMessage(content=(
+                    "You are a strategic advisor. Review the conversation and "
+                    "provide concise guidance in under 100 words. Use enumerated "
+                    "steps, not explanations. Focus on approach, pitfalls to "
+                    "avoid, and key decisions."
+                )),
+                *request.messages[-10:],  # Last 10 messages for context
+                HumanMessage(content="Provide your strategic guidance for the task above."),
+            ]
+
+            # Consult the advisor (sync call)
+            advice_response = self.advisor.invoke(advisor_messages)
+            self.last_advice = advice_response.content
+            preview = self.last_advice[:150]
+            if len(self.last_advice) > 150:
+                preview += "..."
+            print(f"  [Advisor says: {preview}]")
+            print()
+
+        # Inject advice into the system message if available
+        if self.last_advice:
+            advice_block = (
+                f"\n\n<advisor_guidance>\n{self.last_advice}\n</advisor_guidance>\n\n"
+                "Consider the advisor's guidance above when responding. "
+                "Follow the enumerated steps where applicable."
+            )
+            current_system = request.system_message.content if request.system_message else ""
+            request = request.override(
+                system_message=SystemMessage(content=current_system + advice_block)
             )
 
-            if should_consult:
-                print(f"\n  [Advisor middleware: consulting Opus (call #{self.call_count})...]")
-
-                # Build the advisor prompt from the current conversation
-                advisor_messages = [
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a strategic advisor. Review the conversation and "
-                            "provide concise guidance in under 100 words. Use enumerated "
-                            "steps, not explanations. Focus on approach, pitfalls to "
-                            "avoid, and key decisions."
-                        ),
-                    },
-                    *[
-                        {"role": m.type if hasattr(m, "type") else "user", "content": str(m.content)}
-                        for m in request.messages[-10:]  # Last 10 messages for context
-                    ],
-                    {
-                        "role": "user",
-                        "content": "Provide your strategic guidance for the task above.",
-                    },
-                ]
-
-                # Consult the advisor
-                advice_response = await self.advisor.ainvoke(advisor_messages)
-                self.last_advice = advice_response.content
-                print(f"  [Advisor says: {self.last_advice[:150]}...]")
-                print()
-
-            # Inject advice into the system message if available
-            if self.last_advice:
-                advice_block = (
-                    f"\n\n<advisor_guidance>\n{self.last_advice}\n</advisor_guidance>\n\n"
-                    "Consider the advisor's guidance above when responding. "
-                    "Follow the enumerated steps where applicable."
-                )
-                current_system = request.system_message.content if request.system_message else ""
-                from langchain_core.messages import SystemMessage
-
-                request = request.override(
-                    system_message=SystemMessage(content=current_system + advice_block)
-                )
-
-            # Call the executor with the enriched context
-            return await handler(request)
-
-        return wrapped
+        # Call the executor with the enriched context
+        return handler(request)
 
 
 # ── Example 1: Single-turn with Advisor ──────────────────────────────────────
@@ -201,7 +188,6 @@ def run_multi_turn():
         # Get the assistant's response
         for msg in reversed(result["messages"]):
             if hasattr(msg, "content") and isinstance(msg.content, str) and msg.content:
-                # Print first 300 chars of each response
                 preview = msg.content[:300]
                 if len(msg.content) > 300:
                     preview += "..."
