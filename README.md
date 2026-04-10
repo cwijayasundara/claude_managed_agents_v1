@@ -76,6 +76,7 @@ Each experiment has a self-contained `run.py` that handles setup, execution, and
 | 3 | [Data Analyst](experiment_3/) | Managed Agents | File upload, session resources, restricted networking, per-tool config | `claude-haiku-4-5` |
 | 4 | [Advisor Tool](experiment_4/) | Messages API | Executor + advisor pairing, strategic guidance, cost comparison | `claude-haiku-4-5` + `claude-opus-4-6` |
 | 5 | [Deep Agents](experiment_5/) | LangChain | Open-source alternative, model-agnostic, built-in tools, comparison | `anthropic:claude-haiku-4-5` |
+| 6 | [Middleware Advisor](experiment_6/) | LangChain | Advisor strategy via middleware, wrap_model_call, open-source advisor | `claude-haiku-4-5` + `claude-opus-4-6` |
 
 ### Run a single experiment
 
@@ -85,6 +86,7 @@ python experiment_2/run.py    # Stock Analyst — custom tool round-trip
 python experiment_3/run.py    # Data Analyst — file upload + restricted networking
 python experiment_4/run.py    # Advisor Tool — Haiku executor + Opus advisor
 python experiment_5/run.py    # Deep Agents — LangChain open-source alternative
+python experiment_6/run.py    # Middleware Advisor — LangChain advisor strategy
 ```
 
 ### Run all experiments
@@ -95,10 +97,11 @@ python experiment_1/run.py && \
 python experiment_2/run.py && \
 python experiment_3/run.py && \
 python experiment_4/run.py && \
-python experiment_5/run.py
+python experiment_5/run.py && \
+python experiment_6/run.py
 ```
 
-> **Note:** Experiment 5 requires `pip install deepagents` (separate from the shared `requirements.txt`).
+> **Note:** Experiments 5 and 6 require additional installs: `pip install deepagents langchain langchain-anthropic`.
 
 ### What each experiment does
 
@@ -116,6 +119,9 @@ A fast **Haiku executor** consults a smarter **Opus advisor** mid-generation for
 
 **Experiment 5 — Deep Agents** (LangChain)
 [LangChain's open-source alternative](https://blog.langchain.com/deep-agents-deploy-an-open-alternative-to-claude-managed-agents/) to Claude Managed Agents. Model-agnostic, MIT-licensed, with built-in tools (filesystem, shell, planning, sub-agents). Runs custom tool, streaming, and built-in tool examples, plus a side-by-side comparison table. Requires `pip install deepagents`.
+
+**Experiment 6 — Middleware Advisor** (LangChain)
+Implements the **advisor strategy** (cf. Experiment 4) using LangChain v1's `wrap_model_call` middleware instead of Anthropic's native advisor tool. A custom `AdvisorMiddleware` intercepts model calls, consults Opus for strategic guidance, and injects the advice into the executor's system prompt. Open-source, model-agnostic, fully customizable timing. Requires `pip install langchain langchain-anthropic`.
 
 ### Step-by-step mode (experiment 1 only)
 
@@ -155,9 +161,13 @@ python experiment_1/cleanup.py   # Archive agent, delete environment
 │   ├── README.md
 │   └── run.py              # Runs 3 examples: single-turn, multi-turn, cost comparison
 │
-└── experiment_5/           # Deep Agents — LangChain Open-Source Alternative
+├── experiment_5/           # Deep Agents — LangChain Open-Source Alternative
+│   ├── README.md
+│   └── run.py              # Custom tools, streaming, built-in tools, comparison
+│
+└── experiment_6/           # Middleware Advisor — LangChain Advisor Strategy
     ├── README.md
-    └── run.py              # Custom tools, streaming, built-in tools, comparison
+    └── run.py              # wrap_model_call advisor, single-turn, multi-turn
 ```
 
 ## Billing
