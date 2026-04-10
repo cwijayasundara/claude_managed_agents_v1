@@ -75,6 +75,7 @@ Each experiment has a self-contained `run.py` that handles setup, execution, and
 | 2 | [Stock Analyst](experiment_2/) | Managed Agents | Custom tools, client-side execution, tool result round-trip | `claude-haiku-4-5` |
 | 3 | [Data Analyst](experiment_3/) | Managed Agents | File upload, session resources, restricted networking, per-tool config | `claude-haiku-4-5` |
 | 4 | [Advisor Tool](experiment_4/) | Messages API | Executor + advisor pairing, strategic guidance, cost comparison | `claude-haiku-4-5` + `claude-opus-4-6` |
+| 5 | [Deep Agents](experiment_5/) | LangChain | Open-source alternative, model-agnostic, built-in tools, comparison | `anthropic:claude-haiku-4-5` |
 
 ### Run a single experiment
 
@@ -83,6 +84,7 @@ python experiment_1/run.py    # Web Research — agentic AI dashboard
 python experiment_2/run.py    # Stock Analyst — custom tool round-trip
 python experiment_3/run.py    # Data Analyst — file upload + restricted networking
 python experiment_4/run.py    # Advisor Tool — Haiku executor + Opus advisor
+python experiment_5/run.py    # Deep Agents — LangChain open-source alternative
 ```
 
 ### Run all experiments
@@ -92,8 +94,11 @@ python experiment_4/run.py    # Advisor Tool — Haiku executor + Opus advisor
 python experiment_1/run.py && \
 python experiment_2/run.py && \
 python experiment_3/run.py && \
-python experiment_4/run.py
+python experiment_4/run.py && \
+python experiment_5/run.py
 ```
+
+> **Note:** Experiment 5 requires `pip install deepagents` (separate from the shared `requirements.txt`).
 
 ### What each experiment does
 
@@ -108,6 +113,9 @@ You **upload a CSV file** via the Files API and mount it into the agent's contai
 
 **Experiment 4 — Advisor Tool** (Messages API)
 A fast **Haiku executor** consults a smarter **Opus advisor** mid-generation for strategic guidance — all within a single API request. Runs three sub-examples: single-turn architecture design, multi-turn iterative refinement, and a cost comparison with vs without advisor. Requires `advisor-tool-2026-03-01` beta access.
+
+**Experiment 5 — Deep Agents** (LangChain)
+[LangChain's open-source alternative](https://blog.langchain.com/deep-agents-deploy-an-open-alternative-to-claude-managed-agents/) to Claude Managed Agents. Model-agnostic, MIT-licensed, with built-in tools (filesystem, shell, planning, sub-agents). Runs custom tool, streaming, and built-in tool examples, plus a side-by-side comparison table. Requires `pip install deepagents`.
 
 ### Step-by-step mode (experiment 1 only)
 
@@ -143,9 +151,13 @@ python experiment_1/cleanup.py   # Archive agent, delete environment
 │   ├── sample_data.csv     # Input data (mounted into the container)
 │   └── run.py              # All-in-one: setup → run → teardown
 │
-└── experiment_4/           # Advisor Tool — Executor + Advisor Strategy (Messages API)
+├── experiment_4/           # Advisor Tool — Executor + Advisor Strategy (Messages API)
+│   ├── README.md
+│   └── run.py              # Runs 3 examples: single-turn, multi-turn, cost comparison
+│
+└── experiment_5/           # Deep Agents — LangChain Open-Source Alternative
     ├── README.md
-    └── run.py              # Runs 3 examples: single-turn, multi-turn, cost comparison
+    └── run.py              # Custom tools, streaming, built-in tools, comparison
 ```
 
 ## Billing
