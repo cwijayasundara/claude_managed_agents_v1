@@ -14,25 +14,10 @@ A managed agent that researches the latest developments in agentic AI and produc
 
 ## Usage
 
-All commands run from the **project root** (not this directory).
+Run from the **project root**:
 
 ```bash
-# 1. One-time setup — creates agent + environment
-python ex_1_web_research/setup.py
-
-# 2. Run a research session
-python ex_1_web_research/main.py
-
-# 3. Teardown when done
-python ex_1_web_research/cleanup.py
+python ex_1_web_research/run.py
 ```
 
-## Environment Variables
-
-Stored in the root `.env` file with `EXP1_` prefix:
-
-| Key | Description |
-|-----|-------------|
-| `EXP1_AGENT_ID` | Web Research agent ID |
-| `EXP1_AGENT_VERSION` | Agent version |
-| `EXP1_ENVIRONMENT_ID` | Environment ID |
+This handles the full lifecycle: creates the agent + environment, runs a research session, downloads the HTML dashboard, and tears everything down.

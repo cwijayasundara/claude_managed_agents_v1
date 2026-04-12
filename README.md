@@ -123,16 +123,6 @@ A fast **Haiku executor** consults a smarter **Opus advisor** mid-generation for
 **Experiment 6 — Middleware Advisor** (LangChain)
 Implements the **advisor strategy** (cf. Experiment 4) using LangChain v1's `wrap_model_call` middleware instead of Anthropic's native advisor tool. A custom `AdvisorMiddleware` intercepts model calls, consults Opus for strategic guidance, and injects the advice into the executor's system prompt. Open-source, model-agnostic, fully customizable timing. Requires `pip install langchain langchain-anthropic`.
 
-### Step-by-step mode (experiment 1 only)
-
-Experiment 1 also has separate scripts if you want to keep the agent alive across multiple runs:
-
-```bash
-python ex_1_web_research/setup.py     # Create agent + environment, save IDs to .env
-python ex_1_web_research/main.py      # Run a session (repeatable)
-python ex_1_web_research/cleanup.py   # Archive agent, delete environment
-```
-
 ## Project Structure
 
 ```
@@ -143,10 +133,7 @@ python ex_1_web_research/cleanup.py   # Archive agent, delete environment
 │
 ├── ex_1_web_research/           # Web Research — Agentic AI Dashboard
 │   ├── README.md
-│   ├── run.py              # All-in-one: setup → run → teardown
-│   ├── setup.py            # One-time setup (alternative)
-│   ├── main.py             # Per-run (alternative)
-│   └── cleanup.py          # Teardown (alternative)
+│   └── run.py              # All-in-one: setup → run → teardown
 │
 ├── ex_2_custom_tools/           # Stock Analyst — Custom Tools
 │   ├── README.md
@@ -184,19 +171,13 @@ Prompt caching and context compaction are applied automatically to reduce costs.
 
 ## Cleanup
 
-Each experiment has its own `cleanup.py`. To tear down everything:
-
-```bash
-python ex_1_web_research/cleanup.py
-```
-
-Experiments 2 and 3 use `run.py` which tears down automatically. Experiment 1's `run.py` also self-cleans.
+Each experiment's `run.py` handles teardown automatically (archives sessions/agents, deletes environments).
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| `KeyError: 'EXP1_AGENT_ID'` | Run `python ex_1_web_research/setup.py` first |
+| `KeyError: 'ANTHROPIC_API_KEY'` | Ensure `.env` contains a valid API key |
 | `authentication_error` | Check that `ANTHROPIC_API_KEY` in `.env` is valid |
 | No files downloaded | ~3s indexing lag after session goes idle. Scripts account for this. |
 | `cannot delete while running` | Session is still active. Send an interrupt event first. |
