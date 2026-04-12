@@ -77,6 +77,7 @@ Each experiment has a self-contained `run.py` that handles setup, execution, and
 | 4 | [Advisor Tool](ex_4_advisor_native/) | Messages API | Executor + advisor pairing, strategic guidance, cost comparison | `claude-haiku-4-5` + `claude-opus-4-6` |
 | 5 | [Deep Agents](ex_5_deep_agents/) | LangChain | Open-source alternative, model-agnostic, built-in tools, comparison | `anthropic:claude-haiku-4-5` |
 | 6 | [Middleware Advisor](ex_6_advisor_middleware/) | LangChain | Advisor strategy via middleware, wrap_model_call, open-source advisor | `claude-haiku-4-5` + `claude-opus-4-6` |
+| 7 | [Monitoring & Tracing](ex_7_monitoring/) | Managed Agents | Span events, tool tracing, usage tracking, LangSmith integration | `claude-haiku-4-5` |
 
 ### Run a single experiment
 
@@ -87,6 +88,7 @@ python ex_3_file_upload/run.py    # Data Analyst — file upload + restricted ne
 python ex_4_advisor_native/run.py    # Advisor Tool — Haiku executor + Opus advisor
 python ex_5_deep_agents/run.py    # Deep Agents — LangChain open-source alternative
 python ex_6_advisor_middleware/run.py    # Middleware Advisor — LangChain advisor strategy
+python ex_7_monitoring/run.py    # Monitoring — span events, tracing, LangSmith
 ```
 
 ### Run all experiments
@@ -98,10 +100,11 @@ python ex_2_custom_tools/run.py && \
 python ex_3_file_upload/run.py && \
 python ex_4_advisor_native/run.py && \
 python ex_5_deep_agents/run.py && \
-python ex_6_advisor_middleware/run.py
+python ex_6_advisor_middleware/run.py && \
+python ex_7_monitoring/run.py
 ```
 
-> **Note:** Experiments 5 and 6 require additional installs: `pip install deepagents langchain langchain-anthropic`.
+> **Note:** Experiments 5 and 6 require additional installs: `pip install deepagents langchain langchain-anthropic`. Experiment 7 requires `pip install langsmith`.
 
 ### What each experiment does
 
@@ -122,6 +125,9 @@ A fast **Haiku executor** consults a smarter **Opus advisor** mid-generation for
 
 **Experiment 6 — Middleware Advisor** (LangChain)
 Implements the **advisor strategy** (cf. Experiment 4) using LangChain v1's `wrap_model_call` middleware instead of Anthropic's native advisor tool. A custom `AdvisorMiddleware` intercepts model calls, consults Opus for strategic guidance, and injects the advice into the executor's system prompt. Open-source, model-agnostic, fully customizable timing. Requires `pip install langchain langchain-anthropic`.
+
+**Experiment 7 — Monitoring & Tracing** (Managed Agents + LangSmith)
+Builds an **observability layer** around a managed agent session. An `AgentMonitor` class consumes `span.model_request_start/end` events for per-inference latency, traces all tool calls, records lifecycle transitions, and fetches cumulative token usage. Integrates with **LangSmith** to post structured traces (root chain run → child LLM/tool runs) for visualization. Falls back to local JSON traces when LangSmith is not configured. Requires `pip install langsmith`.
 
 ## Project Structure
 
@@ -152,9 +158,13 @@ Implements the **advisor strategy** (cf. Experiment 4) using LangChain v1's `wra
 │   ├── README.md
 │   └── run.py              # Custom tools, streaming, built-in tools, comparison
 │
-└── ex_6_advisor_middleware/           # Middleware Advisor — LangChain Advisor Strategy
+├── ex_6_advisor_middleware/           # Middleware Advisor — LangChain Advisor Strategy
+│   ├── README.md
+│   └── run.py              # wrap_model_call advisor, single-turn, multi-turn
+│
+└── ex_7_monitoring/           # Monitoring & Tracing — Observability + LangSmith
     ├── README.md
-    └── run.py              # wrap_model_call advisor, single-turn, multi-turn
+    └── run.py              # Span events, tool tracing, usage tracking, LangSmith
 ```
 
 ## Billing

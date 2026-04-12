@@ -3,3 +3,4 @@ python-dotenv
 deepagents
 langchain
 langchain-anthropic
+langsmith
